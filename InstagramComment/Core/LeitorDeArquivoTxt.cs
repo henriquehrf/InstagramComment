@@ -7,8 +7,8 @@ namespace InstagramComment
 {
 	public class LeitorDeArquivoTxt : ILeitorDeArquivoTxt
 	{
-		IProcessadorDeTextoService _processadorDeTxt;
-		public LeitorDeArquivoTxt(IProcessadorDeTextoService processadorTxt)
+		IProcessadorDeTexto _processadorDeTxt;
+		public LeitorDeArquivoTxt(IProcessadorDeTexto processadorTxt)
 		{
 			_processadorDeTxt = processadorTxt;
 		}

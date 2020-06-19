@@ -2,10 +2,8 @@
 
 namespace InstagramComment.Core.Interfaces
 {
-	public interface IRegistroLoff
+	public interface ILogDaAplicacao
 	{
-		public void RegistrarLogDeComentarios(string conteudo);
-
-		public void RegistrarLogDeExcessao(Exception exception);
+		public void RegistrarLog(string mensagem);
 	}
 }

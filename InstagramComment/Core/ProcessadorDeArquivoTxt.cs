@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace InstagramComment
 {
-	public class ProcessadorDeArquivoTxt : IProcessadorDeTextoService
+	public class ProcessadorDeArquivoTxt : IProcessadorDeTexto
 	{
 		public string[] ProcessarContasDoInstagram(Task<string> contas)
 		{
