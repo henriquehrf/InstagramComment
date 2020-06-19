@@ -1,6 +1,8 @@
-﻿using OpenQA.Selenium;
+﻿using InstagramComment.Core.Interfaces;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -9,12 +11,14 @@ namespace InstagramComment
 	public class InstagramPO: IDisposable
 	{
 		private IWebDriver _driver;
+		private ILogDaAplicacao _logDaAplicacao;
 		private By _byLabelComentario;
 		private By _byButtonConfirmComentario;
 
-		public InstagramPO(IWebDriver driver)
+		public InstagramPO(IWebDriver driver, ILogDaAplicacao logDaAplicacao)
 		{
 			_driver = driver;
+			_logDaAplicacao = logDaAplicacao;
 			_byLabelComentario = By.XPath("/html/body/div[1]/section/main/div/div[1]/article/div[2]/section[3]/div/form/textarea");
 			_byButtonConfirmComentario = By.XPath("/html/body/div[1]/section/main/div/div[1]/article/div[2]/section[3]/div/form/button");
 		}
@@ -41,6 +45,10 @@ namespace InstagramComment
 			_driver.FindElement(_byLabelComentario).SendKeys(conteudo);
 			_driver.FindElement(_byButtonConfirmComentario).Click();
 			Thread.Sleep(5000);
+			IList<IWebElement> elementos = _driver.FindElements(By.TagName("a"));
+
+			if (elementos.Any(a => a.Text.Contains("@henriquerfirmino")))
+				_logDaAplicacao.RegistrarLog(conteudo);
 
 			return this;
 		}

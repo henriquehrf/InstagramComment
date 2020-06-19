@@ -20,13 +20,14 @@ namespace InstagramComment
 		{
 			int tentativasExecutadas = 0;
 			bool processamentoConcluido = false;
-			while((tentativasExecutadas < TENTATIVAS) && !processamentoConcluido)
+			while ((tentativasExecutadas < TENTATIVAS) && !processamentoConcluido)
 			{
 				try
 				{
 					IWebDriver driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
 					ILeitorDeArquivoTxt arquivoOperacao = new LeitorDeArquivoTxt(new ProcessadorDeArquivoTxt());
-					ISeleniumComentario seleniumOperacao = new EngineSelenium(driver, URL_INSTAGRAM);
+					ILogDaAplicacao logDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_REGISTROS_APLICACAO));
+					ISeleniumComentario seleniumOperacao = new EngineSelenium(driver, logDaAplicacao, URL_INSTAGRAM);
 					var conteudo = arquivoOperacao.LerConteudoArquivoTxt(PATH_INSTAGRAM_CONTAS);
 					for (int i = 0; i < conteudo.Length; i++)
 					{
@@ -38,13 +39,20 @@ namespace InstagramComment
 								{
 									var registro = $"{conteudo[i]} {conteudo[j]} {conteudo[k]}";
 									seleniumOperacao.Comentar(registro);
-									ILogDaAplicacao logDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_REGISTROS_APLICACAO));
-									logDaAplicacao.RegistrarLog(registro);
 									Thread.Sleep(60000);
 								}
 							}
 						}
 					}
+					//ILogDaAplicacao logDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_REGISTROS_APLICACAO));
+					//int count = 1;
+					//while (true)
+					//{
+					//	seleniumOperacao.Comentar("Eu quero ganhar, Tata!");
+					//	logDaAplicacao.RegistrarLog($"OK! - {count}");
+					//	count++;
+					//	Thread.Sleep(58000);
+					//}
 					processamentoConcluido = true;
 				}
 				catch (Exception ex)
