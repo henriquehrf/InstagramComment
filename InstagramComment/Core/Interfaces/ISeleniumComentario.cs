@@ -1,8 +1,7 @@
 ﻿namespace InstagramComment
 {
-	public interface ISeleniumOperacao
+	public interface ISeleniumComentario
 	{
-
 		public void Comentar(string conteudo);
 	}
 }

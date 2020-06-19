@@ -6,13 +6,13 @@ using System.Text;
 
 namespace InstagramComment
 {
-	public class SeleniumServices: ISeleniumOperacao
+	public class EngineSelenium: ISeleniumComentario
 	{
 
 		private IWebDriver _driver;
 		private string _url;
 
-		public SeleniumServices(IWebDriver driver, string url)
+		public EngineSelenium(IWebDriver driver, string url)
 		{
 			_driver = driver;
 			_url = url;

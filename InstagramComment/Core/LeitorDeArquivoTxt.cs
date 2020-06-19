@@ -5,10 +5,10 @@ using System.Text;
 
 namespace InstagramComment
 {
-	public class ArquivoServices : IArquivoOperacao
+	public class LeitorDeArquivoTxt : ILeitorDeArquivoTxt
 	{
-		IProcessarArquivoTxt _processadorDeTxt;
-		public ArquivoServices(IProcessarArquivoTxt processadorTxt)
+		IProcessadorDeTextoService _processadorDeTxt;
+		public LeitorDeArquivoTxt(IProcessadorDeTextoService processadorTxt)
 		{
 			_processadorDeTxt = processadorTxt;
 		}

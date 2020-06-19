@@ -14,8 +14,8 @@ namespace InstagramComment
 			string path = @"C:\Users\Henrique Firmino\Desktop\contas.txt";
 			string urlInstagram = @"https://www.instagram.com/p/CBjVIEHBKoh/";
 			IWebDriver driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-			IArquivoOperacao arquivoOperacao = new ArquivoServices(new ProcessadorDeArquivoTxt());
-			ISeleniumOperacao seleniumOperacao = new SeleniumServices(driver, urlInstagram);
+			ILeitorDeArquivoTxt arquivoOperacao = new LeitorDeArquivoTxt(new ProcessadorDeArquivoTxt());
+			ISeleniumComentario seleniumOperacao = new EngineSelenium(driver, urlInstagram);
 			var conteudo = arquivoOperacao.LerConteudoArquivoTxt(path);
 			for (int i = 0; i < conteudo.Length; i++)
 			{
