@@ -28,6 +28,7 @@ namespace InstagramComment
 					ILeitorDeArquivoTxt arquivoOperacao = new LeitorDeArquivoTxt(new ProcessadorDeArquivoTxt());
 					ILogDaAplicacao logDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_REGISTROS_APLICACAO));
 					ISeleniumComentario seleniumOperacao = new EngineSelenium(driver, logDaAplicacao, URL_INSTAGRAM);
+					Random random = new Random();
 					var conteudo = arquivoOperacao.LerConteudoArquivoTxt(PATH_INSTAGRAM_CONTAS);
 					for (int i = 0; i < conteudo.Length; i++)
 					{
@@ -39,20 +40,12 @@ namespace InstagramComment
 								{
 									var registro = $"{conteudo[i]} {conteudo[j]} {conteudo[k]}";
 									seleniumOperacao.Comentar(registro);
-									Thread.Sleep(60000);
+									Thread.Sleep(59250);
+									Thread.Sleep(random.Next(105, 30000));
 								}
 							}
 						}
 					}
-					//ILogDaAplicacao logDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_REGISTROS_APLICACAO));
-					//int count = 1;
-					//while (true)
-					//{
-					//	seleniumOperacao.Comentar("Eu quero ganhar, Tata!");
-					//	logDaAplicacao.RegistrarLog($"OK! - {count}");
-					//	count++;
-					//	Thread.Sleep(58000);
-					//}
 					processamentoConcluido = true;
 				}
 				catch (Exception ex)
