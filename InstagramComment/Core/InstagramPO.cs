@@ -1,9 +1,10 @@
 ﻿using InstagramComment.Core.Interfaces;
+using InstagramComment.Models;
+using Newtonsoft.Json;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace InstagramComment
@@ -26,10 +27,13 @@ namespace InstagramComment
 			_byComentariosPublicados = By.TagName("span");
 		}
 
-		public InstagramPO Navegar(string url)
+		public InstagramPO Navegar(string url, Cookie cookie)
 		{
+			if (!_driver.Manage().Cookies.AllCookies.Any(c => c.Name == cookie.Name && c.Value == cookie.Value))
+				_driver.Manage().Cookies.DeleteAllCookies();
+			
 			_driver.Navigate().GoToUrl("http://instagram.com/");
-			_driver.Manage().Cookies.AddCookie(new Cookie("sessionid", "916846849%3AIkOyBcKBCCgyxU%3A13"));
+			_driver.Manage().Cookies.AddCookie(cookie);
 			_driver.Navigate().GoToUrl(url);
 			return this;
 		}
@@ -47,9 +51,13 @@ namespace InstagramComment
 				if (item.Text.Contains(conteudo))
 				{
 					_quantidadeDeComentariosValidos++;
-					_logDaAplicacao.RegistrarLog(conteudo);
-					_logDaAplicacao.RegistrarLog($"Nº {_quantidadeDeComentariosValidos}");
-
+					var logAplicacao = new LogAplicacao()
+					{
+						Conteudo = conteudo,
+						DataHoraLog = DateTime.Now,
+						Sequencia = _quantidadeDeComentariosValidos
+					};
+					_logDaAplicacao.RegistrarLog(JsonConvert.SerializeObject(logAplicacao));
 				}
 			}
 

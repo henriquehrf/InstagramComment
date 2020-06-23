@@ -1,8 +1,11 @@
 ﻿using InstagramComment.Core;
 using InstagramComment.Core.Interfaces;
+using InstagramComment.Models;
+using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -11,49 +14,59 @@ namespace InstagramComment
 {
 	class Program
 	{
-		const string PATH_INSTAGRAM_CONTAS = @"C:\Users\Henrique Firmino\Desktop\contas.txt";
-		const string PATH_LOG_ERRO_APLICACAO = @"C:\Users\Henrique Firmino\Desktop\InstagramComment_Error_LogApp.txt";
-		const string PATH_LOG_REGISTROS_APLICACAO = @"C:\Users\Henrique Firmino\Desktop\InstagramComment_LogApp.txt";
-		const string URL_INSTAGRAM = @"https://www.instagram.com/p/CBjVIEHBKoh/";
-		const int TENTATIVAS = 3;
+		public readonly static string PATH_PROGRAMA = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+		public readonly static string PATH_ARQUIVO_CONFIG = string.Concat(PATH_PROGRAMA, "\\config.txt");
+		public readonly static string PATH_LOG_ERRO_APLICACAO = string.Concat(PATH_PROGRAMA, "\\error.txt");
+		public readonly static string PATH_LOG_REGISTROS_APLICACAO = string.Concat(PATH_PROGRAMA, "\\registro.txt");
+		public static Config _config;
+		public static ILeitorDeArquivoTxt _leitorDeArquivo = new LeitorDeArquivoTxt();
+
 		static void Main(string[] args)
 		{
-			int tentativasExecutadas = 0;
+			//var teste = new List<string>();
+			//teste.Add("916846849%3AIkOyBcKBCCgyxU%3A13");
+			//teste.Add("33394755582%3Ar4mIBkIsNQJaIL%3A6");
+			//JsonConvert.SerializeObject(teste);
+			_config = JsonConvert.DeserializeObject<Config>(_leitorDeArquivo.LerConteudoArquivoTxt(PATH_ARQUIVO_CONFIG));
+			int tentativasExecutadas = 1;
 			bool processamentoConcluido = false;
-			while ((tentativasExecutadas < TENTATIVAS) && !processamentoConcluido)
+			IWebDriver driver = new ChromeDriver(PATH_PROGRAMA);
+			ILogDaAplicacao logDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_REGISTROS_APLICACAO));
+			ISeleniumComentario seleniumOperacao = new EngineSelenium(driver, logDaAplicacao, _config.UrlInstagram);
+			Random random = new Random();
+			IProcessadorDeContasDoInstagram processadorInstagram = new ProcessadorDeContasDoInstagram(_config.Contas);
+			processadorInstagram.ProcessarContasDoInstagram();
+			while ((tentativasExecutadas < _config.Tentativas) && !processamentoConcluido)
 			{
 				try
 				{
-					IWebDriver driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-					ILeitorDeArquivoTxt arquivoOperacao = new LeitorDeArquivoTxt(new ProcessadorDeArquivoTxt());
-					ILogDaAplicacao logDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_REGISTROS_APLICACAO));
-					ISeleniumComentario seleniumOperacao = new EngineSelenium(driver, logDaAplicacao, URL_INSTAGRAM);
-					Random random = new Random();
-					var conteudo = arquivoOperacao.LerConteudoArquivoTxt(PATH_INSTAGRAM_CONTAS);
-					for (int i = 0; i < conteudo.Length; i++)
+					int indiceDeCookie = 0;
+					foreach (var conteudo in processadorInstagram.ContasProcessadas)
 					{
-						for (int j = 0; j < conteudo.Length; j++)
+						seleniumOperacao.Comentar(conteudo.Value, new Cookie("sessionid", _config.Cookies[indiceDeCookie]));
+						indiceDeCookie++;
+						if (indiceDeCookie == _config.Cookies.Count)
 						{
-							for (int k = 0; k < conteudo.Length; k++)
-							{
-								if (i != j && i != k && j != k)
-								{
-									var registro = $"{conteudo[i]} {conteudo[j]} {conteudo[k]}";
-									seleniumOperacao.Comentar(registro);
-									Thread.Sleep(59250);
-									Thread.Sleep(random.Next(105, 30000));
-								}
-							}
+							indiceDeCookie = 0;
+							Thread.Sleep(random.Next(1 * 60000, 5 * 60000));
 						}
 					}
+
 					processamentoConcluido = true;
 				}
 				catch (Exception ex)
 				{
-					ILogDaAplicacao logDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_ERRO_APLICACAO));
-					logDaAplicacao.RegistrarLog(ex.Message);
+					ILogDaAplicacao logErroDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_ERRO_APLICACAO));
+					var logErro = new LogErro()
+					{
+						DataHoraLog = DateTime.Now,
+						Erro = ex.Message
+					};
+					logErroDaAplicacao.RegistrarLog(JsonConvert.SerializeObject(logErro));
 					tentativasExecutadas++;
-					Thread.Sleep(60000);
+					processadorInstagram.ReprocessarContasDoIntagram();
+					Thread.Sleep(random.Next(1 * 60000, 5 * 60000));
+
 				}
 			}
 		}

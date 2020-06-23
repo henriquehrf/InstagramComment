@@ -12,9 +12,9 @@ namespace InstagramComment.Core
 		{
 			_gravadorArquivoTxt = gravadorArquivoTxt;
 		}
-		public void RegistrarLog(string mensagem)
+		public void RegistrarLog(string conteudo)
 		{
-			_gravadorArquivoTxt.GravarConteudo(mensagem, DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"));
+			_gravadorArquivoTxt.GravarConteudo(conteudo);
 		}
 	}
 }
