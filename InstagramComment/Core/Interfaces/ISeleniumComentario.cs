@@ -1,7 +1,9 @@
-﻿namespace InstagramComment
+﻿using OpenQA.Selenium;
+
+namespace InstagramComment
 {
 	public interface ISeleniumComentario
 	{
-		public void Comentar(string conteudo);
+		public void Comentar(string conteudo, Cookie cookie);
 	}
 }

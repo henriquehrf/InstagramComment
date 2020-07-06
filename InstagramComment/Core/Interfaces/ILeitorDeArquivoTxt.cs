@@ -4,7 +4,7 @@ namespace InstagramComment
 {
 	public interface ILeitorDeArquivoTxt
 	{
-		public string[] LerConteudoArquivoTxt(string path);
+		public string LerConteudoArquivoTxt(string path);
 
 	}
 }
