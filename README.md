@@ -28,7 +28,7 @@ Faça o login no instagram, feito isso:
 <li>1º Pressione F12.</li>
 <li>2º Atualize sua página do instagram.</li>
 <li>3º Na aba Network, procure pela requisição *get_encripted_credentials*</li>
-<li>4º Na aba cookies, procure por *sessionid*. </li>
+  <li>4º Na aba cookies, procure por <i> sessionid</i>. </li>
 <li>5º Copie o valor na tag COOKIE.</li>
 <li>6º Pronto :)</li>
 
@@ -49,5 +49,9 @@ De tempos em tempos você irá ver seu browser iterando a página do instagram. 
 - Sistema Operacional Windows 7, 8 e 10.
 
 ## Por fim...
+
+Execute o arquivo <strong>InstagramComment.exe </strong> ...
+
+<strong>ATENÇÃO </strong>
 
 Não nos responsabilizamos por danos causados por eventuais uso indevido da aplicação, sendo de total responsabilidade do usuário.
