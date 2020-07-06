@@ -3,12 +3,32 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <ApplicationIcon>favicon (1).ico</ApplicationIcon>
+    <PackageIcon>social-media-marketing.png</PackageIcon>
+    <RepositoryUrl>https://github.com/henriquehrf/InstagramComment</RepositoryUrl>
+    <Copyright>Henrique R. Firmino</Copyright>
+    <Company>Henrique R. Firmino</Company>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>InstagramComment é uma aplicação desenvolvida em C# e automatização de testes Selenium. Esta aplicação tem por finalidade aprimorar os conhecimentos em programação.</Description>
+    <PackageLicenseFile>Licenca.txt</PackageLicenseFile>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="83.0.4103.3900" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\Desktop\Licenca.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\..\..\..\Downloads\social-media-marketing.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
