@@ -1,5 +1,7 @@
-﻿using System;
+﻿using InstagramComment.Core.Exception;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace InstagramComment
 {
@@ -14,24 +16,36 @@ namespace InstagramComment
 			_contasNaoProcessadas = contas.Trim().Split(',');
 			ContasProcessadas = new SortedDictionary<int, string>();
 		}
-		public void ProcessarContasDoInstagram()
+		public void ProcessarContasDoInstagram(int numeroDeConta)
 		{
+			if (numeroDeConta >= _contasNaoProcessadas.Length || numeroDeConta <= 0)
+				throw new NumeroDeContaPorComentarioExcception(numeroDeConta);
 
-			for (int i = 0; i < _contasNaoProcessadas.Length; i++)
-				for (int j = 0; j < _contasNaoProcessadas.Length; j++)
-					for (int k = 0; k < _contasNaoProcessadas.Length; k++)
-						if (i != j && i != k && j != k)
-							ContasProcessadas.Add(
-								new Random().Next(minValue: 1, maxValue: int.MaxValue),
-								$"{_contasNaoProcessadas[i]} " +
-								$"{_contasNaoProcessadas[j]} " +
-								$"{_contasNaoProcessadas[k]}");
+			foreach (var conta in _contasNaoProcessadas)
+			{
+				var conteudo = new StringBuilder();
+				int contasAdicionada = 1;
+				conteudo.Append(conta);
+				conteudo.Append(" ");
+				foreach (var proximaConta in _contasNaoProcessadas)
+					if (contasAdicionada != numeroDeConta && conta != proximaConta)
+					{
+						conteudo.Append(proximaConta);
+						conteudo.Append(" ");
+						contasAdicionada++;
+					}
+
+				ContasProcessadas.Add(
+					new Random().Next(minValue: 1, maxValue: int.MaxValue),
+					conteudo.ToString()
+					);
+			}
 		}
 
-		public void ReprocessarContasDoIntagram()
+		public void ReprocessarContasDoIntagram(int numeroDeConta)
 		{
 			ContasProcessadas.Clear();
-			ProcessarContasDoInstagram();
+			ProcessarContasDoInstagram(numeroDeConta);
 		}
 	}
 }

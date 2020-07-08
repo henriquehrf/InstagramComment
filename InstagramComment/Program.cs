@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -23,51 +22,61 @@ namespace InstagramComment
 
 		static void Main(string[] args)
 		{
-			//var teste = new List<string>();
-			//teste.Add("916846849%3AIkOyBcKBCCgyxU%3A13");
-			//teste.Add("33394755582%3Ar4mIBkIsNQJaIL%3A6");
-			//JsonConvert.SerializeObject(teste);
-			_config = JsonConvert.DeserializeObject<Config>(_leitorDeArquivo.LerConteudoArquivoTxt(PATH_ARQUIVO_CONFIG));
-			int tentativasExecutadas = 1;
-			bool processamentoConcluido = false;
-			IWebDriver driver = new ChromeDriver(PATH_PROGRAMA);
 			ILogDaAplicacao logDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_REGISTROS_APLICACAO));
-			ISeleniumComentario seleniumOperacao = new EngineSelenium(driver, logDaAplicacao, _config.UrlInstagram);
-			Random random = new Random();
-			IProcessadorDeContasDoInstagram processadorInstagram = new ProcessadorDeContasDoInstagram(_config.Contas);
-			processadorInstagram.ProcessarContasDoInstagram();
-			while ((tentativasExecutadas < _config.Tentativas) && !processamentoConcluido)
+			ILogDaAplicacao logErroDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_ERRO_APLICACAO));
+
+			try
 			{
-				try
+				_config = JsonConvert.DeserializeObject<Config>(_leitorDeArquivo.LerConteudoArquivoTxt(PATH_ARQUIVO_CONFIG));
+				int tentativasExecutadas = 1;
+				bool processamentoConcluido = false;
+				IWebDriver driver = new ChromeDriver(PATH_PROGRAMA);
+				ISeleniumComentario seleniumOperacao = new EngineSelenium(driver, logDaAplicacao, _config.UrlInstagram);
+				Random random = new Random();
+				IProcessadorDeContasDoInstagram processadorInstagram = new ProcessadorDeContasDoInstagram(_config.Contas);
+				processadorInstagram.ProcessarContasDoInstagram(_config.NumeroDeContaPorComentario);
+				while ((tentativasExecutadas < _config.Tentativas) && !processamentoConcluido)
 				{
-					int indiceDeCookie = 0;
-					foreach (var conteudo in processadorInstagram.ContasProcessadas)
+					try
 					{
-						seleniumOperacao.Comentar(conteudo.Value, new Cookie("sessionid", _config.Cookies[indiceDeCookie]));
-						indiceDeCookie++;
-						if (indiceDeCookie == _config.Cookies.Count)
+						int indiceDeCookie = 0;
+						foreach (var conteudo in processadorInstagram.ContasProcessadas)
 						{
-							indiceDeCookie = 0;
-							Thread.Sleep(random.Next(1 * 60000, 5 * 60000));
+							seleniumOperacao.Comentar(conteudo.Value, new Cookie("sessionid", _config.Cookies[indiceDeCookie]));
+							tentativasExecutadas = 0;
+							indiceDeCookie++;
+							if (indiceDeCookie == _config.Cookies.Count)
+							{
+								indiceDeCookie = 0;
+								Thread.Sleep(random.Next(1 * 60000, 3 * 60000));
+							}
 						}
+
+						processamentoConcluido = true;
 					}
-
-					processamentoConcluido = true;
-				}
-				catch (Exception ex)
-				{
-					ILogDaAplicacao logErroDaAplicacao = new GravadorDeLogDaAplicacao(new GravadorDeArquivoTxt(PATH_LOG_ERRO_APLICACAO));
-					var logErro = new LogErro()
+					catch (Exception ex)
 					{
-						DataHoraLog = DateTime.Now,
-						Erro = ex.Message
-					};
-					logErroDaAplicacao.RegistrarLog(JsonConvert.SerializeObject(logErro));
-					tentativasExecutadas++;
-					processadorInstagram.ReprocessarContasDoIntagram();
-					Thread.Sleep(random.Next(1 * 60000, 5 * 60000));
-
+						var logErro = new LogErro()
+						{
+							DataHoraLog = DateTime.Now,
+							Erro = ex.Message
+						};
+						logErroDaAplicacao.RegistrarLog(JsonConvert.SerializeObject(logErro));
+						tentativasExecutadas++;
+						processadorInstagram.ReprocessarContasDoIntagram();
+						Thread.Sleep(random.Next(1 * 60000, 5 * 60000));
+					}
 				}
+
+			}
+			catch (Exception ex)
+			{
+				var logErro = new LogErro()
+				{
+					DataHoraLog = DateTime.Now,
+					Erro = ex.Message
+				};
+				logErroDaAplicacao.RegistrarLog(JsonConvert.SerializeObject(logErro));
 			}
 		}
 	}

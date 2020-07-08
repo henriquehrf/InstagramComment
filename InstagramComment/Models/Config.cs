@@ -13,5 +13,8 @@ namespace InstagramComment.Models
 		public string Contas { get; set; }
 		[JsonProperty("COOKIE")]
 		public IList<string> Cookies { get; set; }
+
+		[JsonProperty("NUMERO_CONTA_COMENTARIO")]
+		public int NumeroDeContaPorComentario { get; set; }
 	}
 }
