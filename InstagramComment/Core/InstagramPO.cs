@@ -17,24 +17,26 @@ namespace InstagramComment
 		private By _byButtonConfirmComentario;
 		private By _byComentariosPublicados;
 		public static int _quantidadeDeComentariosValidos = 0;
+		private Config _config;
 
-		public InstagramPO(IWebDriver driver, ILogDaAplicacao logDaAplicacao)
+		public InstagramPO(IWebDriver driver, ILogDaAplicacao logDaAplicacao, Config config)
 		{
 			_driver = driver;
 			_logDaAplicacao = logDaAplicacao;
-			_byLabelComentario = By.XPath("/html/body/div[1]/section/main/div/div[1]/article/div[2]/section[3]/div/form/textarea");
-			_byButtonConfirmComentario = By.XPath("/html/body/div[1]/section/main/div/div[1]/article/div[2]/section[3]/div/form/button");
+			_byLabelComentario = By.XPath(config.TagDoComentario);
+			_byButtonConfirmComentario = By.XPath(config.TagDoBotaoConfirmacao);
 			_byComentariosPublicados = By.TagName("span");
+			_config = config;
 		}
 
-		public InstagramPO Navegar(string url, Cookie cookie)
+		public InstagramPO Navegar(Cookie cookie)
 		{
 			if (!_driver.Manage().Cookies.AllCookies.Any(c => c.Name == cookie.Name && c.Value == cookie.Value))
 				_driver.Manage().Cookies.DeleteAllCookies();
 			
 			_driver.Navigate().GoToUrl("http://instagram.com/");
 			_driver.Manage().Cookies.AddCookie(cookie);
-			_driver.Navigate().GoToUrl(url);
+			_driver.Navigate().GoToUrl(_config.UrlInstagram);
 			return this;
 		}
 

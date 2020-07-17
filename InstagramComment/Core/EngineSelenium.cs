@@ -1,4 +1,5 @@
 ﻿using InstagramComment.Core.Interfaces;
+using InstagramComment.Models;
 using OpenQA.Selenium;
 
 namespace InstagramComment
@@ -8,19 +9,19 @@ namespace InstagramComment
 
 		private IWebDriver _driver;
 		private ILogDaAplicacao _logDaAplicacao;
-		private string _url;
+		private Config _configuracao;
 		public EngineSelenium(IWebDriver driver, 
 							  ILogDaAplicacao logDaAplicacao,
-							  string url)
+							  Config configuracao)
 		{
 			_driver = driver;
 			_logDaAplicacao = logDaAplicacao;
-			_url = url;
+			_configuracao = configuracao;
 		}
 
 		public void Comentar(string conteudo, Cookie cookie)
 		{
-			new InstagramPO(_driver, _logDaAplicacao).Navegar(_url, cookie)
+			new InstagramPO(_driver, _logDaAplicacao, _configuracao).Navegar(cookie)
 									.Comentar(conteudo);
 		}
 	}

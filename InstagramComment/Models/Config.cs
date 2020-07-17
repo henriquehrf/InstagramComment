@@ -16,5 +16,11 @@ namespace InstagramComment.Models
 
 		[JsonProperty("NUMERO_CONTA_COMENTARIO")]
 		public int NumeroDeContaPorComentario { get; set; }
+
+		[JsonProperty("TAG_COMENTARIO")]
+		public string TagDoComentario { get; set; }
+
+		[JsonProperty("TAG_BOTACAO_CONFIRMACAO")]
+		public string TagDoBotaoConfirmacao { get; set; }
 	}
 }

@@ -31,7 +31,7 @@ namespace InstagramComment
 				int tentativasExecutadas = 1;
 				bool processamentoConcluido = false;
 				IWebDriver driver = new ChromeDriver(PATH_PROGRAMA);
-				ISeleniumComentario seleniumOperacao = new EngineSelenium(driver, logDaAplicacao, _config.UrlInstagram);
+				ISeleniumComentario seleniumOperacao = new EngineSelenium(driver, logDaAplicacao, _config);
 				Random random = new Random();
 				IProcessadorDeContasDoInstagram processadorInstagram = new ProcessadorDeContasDoInstagram(_config.Contas);
 				processadorInstagram.ProcessarContasDoInstagram(_config.NumeroDeContaPorComentario);
